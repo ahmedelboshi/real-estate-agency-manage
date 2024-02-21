@@ -213,4 +213,3 @@ class CategoryAdmin(ModelAdmin):
 
 admin.site.register(Category, CategoryAdmin)
 
-# TODO list client properties in his admin page

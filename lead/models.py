@@ -46,7 +46,6 @@ class Client(models.Model):
         return reverse("admin:lead_client_change", args=[self.pk])
 
 class ClientContactData(models.Model):
-    # TODO extend choices
     TWITTER = "twitter"
     FACEBOOK = "facebook"
     LINKEDIN = "linkedin"

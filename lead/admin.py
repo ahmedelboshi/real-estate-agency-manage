@@ -153,7 +153,7 @@ class ClientAdmin(ModelAdmin):
         ClientContactTypeFilter,
     ]
     inlines = [ClientContactDataInline, PropertyInline]
-    # TODO add filter using contact info
+
     # Override the change_view method
 
     change_form_template = "admin/lead/client/change_form.html"
