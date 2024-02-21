@@ -9,16 +9,14 @@ from django.utils.html import format_html
 from django_admin_multiple_choice_list_filter.list_filters import (
     MultipleChoiceListFilter,
 )
-
+from django.utils.safestring import mark_safe
+from django.utils.html import escape
 # Register your models here.
 from django.forms import inlineformset_factory
 from .models import ClientGroup, Client
 
-
 class ClientGroupAdmin(ModelAdmin):
     list_display = ("id", "name")
-    # list_select_related = ['clients']
-    # inlines = [ClientInline]
 
     change_form_template = "admin/lead/clientgroup/change_form.html"
 
@@ -145,18 +143,33 @@ class ClientContactTypeFilter(MultipleChoiceListFilter):
 
 
 class ClientAdmin(ModelAdmin):
-    list_display = ("id", "name")
+    list_display = ("id", "name", "dont_call", "groups_as_text")
     list_filter = [
         "groups",
         "add_at",
         "dont_call",
         ClientContactTypeFilter,
     ]
+    list_editable=['dont_call']
     inlines = [ClientContactDataInline, PropertyInline]
-
+    search_fields = ["name", "contact_data__data"]
     # Override the change_view method
 
     change_form_template = "admin/lead/client/change_form.html"
+
+    def groups_as_text(self,obj):
+        groups = obj.groups.all()
+        if not groups:
+            return "-"
+        text=""
+        groups_len = groups.count()
+        for index ,group in enumerate(groups):
+            text += f"<a href='{group.get_absolute_url()}'>"+escape(f'{group}')+mark_safe("</a>")
+            if index + 1 != groups_len:
+                text+=" ,"
+
+        return mark_safe(text)
+    groups_as_text.description = "hi"
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
         extra_context = extra_context or {}
@@ -171,3 +184,5 @@ class ClientAdmin(ModelAdmin):
 
 
 admin.site.register(Client, ClientAdmin)
+
+# TODO add search using ClientContactData value

@@ -14,6 +14,10 @@ class ClientGroup(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse("admin:lead_clientgroup_change", args=[self.pk])
+    
+
     def clients_as_text(self):
         clients = self.clients.all()
         html = ""
