@@ -1,0 +1,27 @@
+<!-- templates/admin/lead/clientgroup/change_form.html -->
+
+{% extends 'admin/change_form.html' %}
+{% load i18n admin_urls static admin_modify unfold %}
+
+{% block content %}
+{{ block.super }}
+{% if associated_clients %}
+
+{% component "unfold/components/flex.html" with class="w-full" %}
+    {% component "unfold/components/card.html" %}
+
+    <div>
+      <h2 class="block font-medium mb-2 text-gray-900 text-sm dark:text-gray-200 required">{% trans "Associated Clients" %}</h2>
+      <ul>
+        {% for client in associated_clients %}
+          <li>
+            <a href="{{client.get_absolute_url}}">{{ client.name }}</a>
+            
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endcomponent %}
+{% endcomponent %}
+{% endif %}
+{% endblock %}

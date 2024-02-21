@@ -1,0 +1,117 @@
+{% extends 'admin/change_form.html' %}
+{% load static %}
+{% load i18n admin_urls static admin_modify unfold %}
+
+
+{% block after_field_sets %}
+<!-- <form name="form1" id="form1" action="/action_page.php"> -->
+
+<div id="attributes_card" class="flex flex-row flex-grow w-full">
+
+{% component "unfold/components/flex.html" with class="w-full" %}
+    {% component "unfold/components/card.html" %}
+        <div id="attributes" class="flex flex-row gap-2 w-full">
+
+</div>
+    {% endcomponent %}
+{% endcomponent %}
+</div>
+<br><br>
+{% comment %} <input type="hidden" name="choices" id="choices" value="{{ choices }}"> {% endcomment %}
+<!-- <input type="submit" value="Submit">   -->
+<!-- </form> -->
+
+{% endblock %}
+
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+
+<style>
+.attribute{
+      display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap:10px;
+}
+.attribute select{
+  max-width: 60%;
+}
+</style>
+
+<script>
+    {% if attr %}
+  var propertyTypes = {{ attr| safe}} ;
+  {% else %}
+  var propertyTypes = [] ;
+  {% endif %}
+  function populateAttributes(propertyTypeId, choices, attributeList, choicesInput) {
+    attributeList.innerHTML = "";
+    choicesInput.value = "";
+
+    for (var i = 0; i < propertyTypes.length; i++) {
+        if (propertyTypes[i].id == propertyTypeId) {
+            propertyTypes[i].attributes.forEach(function (attribute) {
+                var attr_container = document.createElement("div");
+                attr_container.classList.add("attribute")
+                var attr_name = document.createElement("span");
+                attr_name.innerHTML = attribute.name;
+
+                var select = document.createElement("select");
+                select.options.add(new Option("select value", ""));
+                attribute.choices.forEach(function (choice) {
+                    select.options.add(new Option(choice.choice, choice.id));
+                    if (choices.includes(choice.id.toString())) {
+                        select.value = choice.id;
+                    }
+                });
+                attributeList.appendChild(attr_container);
+                attr_container.appendChild(attr_name);
+                attr_container.appendChild(select);
+
+                // add event listener to the select element
+                select.addEventListener("change", function () {
+                    var selectedChoices = [];
+                    var selects = attributeList.querySelectorAll('select');
+                    for (var i = 0; i < selects.length; i++) {
+                        if (selects[i].value != "") {
+                            selectedChoices.push(selects[i].value);
+                        }
+                    }
+                    choicesInput.value = selectedChoices.join("_");
+                });
+            });
+            break;
+        }
+    }
+}
+
+window.onload = function () {
+    var attr_card = document.getElementById("attributes_card");
+    var property_type = document.getElementById("id_property_type");
+    var attributeList = document.getElementById("attributes");
+    var choicesInput = document.getElementById("id_choices");
+    var choices = choicesInput.value.split("_");
+
+    // populate the itemType dropdown
+    if (property_type && property_type.value) {
+        attr_card.style.display = "flex";
+        populateAttributes(property_type.value, choices, attributeList, choicesInput);
+    } else {
+        attr_card.style.display = "none";
+    }
+
+    // when property type select changes
+    property_type.onchange = function () {
+        // if property type selected show property type attributes
+        if (this.value) {
+            attr_card.style.display = "flex";
+            populateAttributes(this.value, choices, attributeList, choicesInput);
+        } else {
+            attr_card.style.display = "none";
+        }
+    };
+};
+
+</script>
+{% endblock %}

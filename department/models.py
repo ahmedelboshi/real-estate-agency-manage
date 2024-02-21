@@ -61,7 +61,7 @@ class Property(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("Property_detail", kwargs={"pk": self.pk})
+        return reverse("admin:department_property_change", args=[self.pk])
 
 
 class PropertyImage(models.Model):

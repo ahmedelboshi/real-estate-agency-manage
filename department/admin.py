@@ -4,10 +4,11 @@ from django.contrib import admin
 from django_svg_image_form_field import SvgAndImageFormField
 from nested_admin import (NestedModelAdmin, NestedStackedInline,
                           NestedTabularInline)
+from unfold.admin import ModelAdmin
 
 # Register your models here.
 # @admin.register(Category)
-# class CategoryAdmin(admin.ModelAdmin):
+# class CategoryAdmin(ModelAdmin):
 #     list_display = ("name",  "status")
 #     list_filter = ("status",)
 
@@ -39,7 +40,7 @@ class PropertyForm(forms.ModelForm):
 
 
     def get_initial_for_field(self, field, field_name: str):
-        print(field_name)
+
         # Check if the field name passed is 'choices'
         if field_name == "choices":
             # Retrieve all the attribute values of the instance and extract the id of the choice from each value
@@ -72,7 +73,7 @@ class PropertyForm(forms.ModelForm):
 
                 # delete any attribute values that don't belong to the item's type
                 item_attrs_values.exclude(
-                    choice__attribute__item_type=self.instance.type
+                    choice__attribute__item_type=self.instance.property_type
                 ).delete()
                 # create a list to hold new attribute values
                 attrs_values = []
@@ -89,8 +90,8 @@ class PropertyForm(forms.ModelForm):
 
 
 @admin.register(Property)
-class PropertyAdmin(admin.ModelAdmin):
-    # TODO add ability to set property type 
+class PropertyAdmin(ModelAdmin):
+
     # TODO add add advance search
     list_display = ("id", "owner", "name","want",  "status", "price", "category")
     list_filter = ("status", "status_item","category","property_type","want")
@@ -100,6 +101,16 @@ class PropertyAdmin(admin.ModelAdmin):
     change_form_template = "admin/department/item_change_form.html"
 
     form = PropertyForm
+
+    fieldsets = (
+        ("General Information", {"fields": ("category", "city", "name", "decr")}),
+        ("Status Information", {"fields": ("status", "status_item")}),
+        ("Media Information", {"fields": ("video",)}),
+        ("Price Information", {"fields": ("price",)}),
+        (" Owner ", {"fields": ( "owner",)}),
+        ("Notes and Want Information", {"fields": ("notes", "want")}),
+        ("Property Type Information", {"fields": ("property_type","choices")}),
+    )
 
     def get_form(self, request, obj=None, **kwargs):
         # Get the form from the parent method
@@ -197,7 +208,7 @@ class PropertyTypeAdmin(NestedModelAdmin):
 
 admin.site.register(PropertyType, PropertyTypeAdmin)
 
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(ModelAdmin):
     list_display = ('name',)
 
 admin.site.register(Category, CategoryAdmin)

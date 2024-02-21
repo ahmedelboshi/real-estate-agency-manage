@@ -1,0 +1,76 @@
+{% extends 'admin/change_form.html' %}
+{% load i18n admin_urls static admin_modify unfold %}
+
+{% block content %}
+    {{ block.super }}
+    {% if associated_deals %}
+        <h2 class="bg-gray-100 border border-transparent font-semibold mb-6 px-4 py-3 rounded-md text-gray-900 text-sm lg:-mx-4 dark:bg-white/[.02] dark:border dark:border-gray-800 dark:text-gray-200">
+            {% trans "Associated Deals" %}
+        </h2>
+
+        <div class="mb-10">
+            {% for deal in associated_deals %}
+                {% component "unfold/components/card.html" with class="my-10 p-4" %}
+                    <a href="{{ deal.get_absolute_url }}">
+                        <div class="flex justify-between w-full">
+                            <div class="flex flex-col my-2 w-1/2">
+                                <p class="text-gray-900 dark:text-gray-200">
+                                    {% trans "created_at " %}
+                                </p>
+                                <p class="mx-1">{{ deal.created_at }}</p>
+                            </div>
+                            <div class="flex flex-col my-2 w-1/2">
+                                <p class="text-gray-900 dark:text-gray-200">
+                                    {% trans "last_update " %}
+                                </p>
+                                <p class="mx-1">{{ deal.last_update }}</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between w-full">
+                            <div class="flex flex-col my-2 w-1/2">
+                                <p class="text-gray-900 dark:text-gray-200">
+                                    {% trans "commotion " %}
+                                </p>
+                                <p class="mx-1">{{ deal.commotion }}</p>
+                            </div>
+                            <div class="flex flex-col my-2 w-1/2">
+                                <p class="text-gray-900 dark:text-gray-200">
+                                    {% trans "price " %}
+                                </p>
+                                <p class="mx-1">{{ deal.price }}</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col my-2">
+                            <p class="text-gray-900 dark:text-gray-200 ">
+                                {% trans "descraption " %}
+                            </p>
+                            <p class="mx-1">{{ deal.description }}</p>
+                        </div>
+                        <div class="flex flex-col my-2">
+                            <p class="text-gray-900 dark:text-gray-200 ">
+                                {% trans "clients " %}
+                            </p>
+                            <p class="mx-1">
+                                {% for client in deal.clients.all %}
+                                    <a href="{{ client.get_absolute_url }}">{{ client }}</a>
+                                    {% if not forloop.last %},{% endif %}
+                                {% endfor %}
+                            </p>
+                        </div>
+                          <div class="flex flex-col my-2">
+                            <p class="text-gray-900 dark:text-gray-200 ">
+                                {% trans "salers" %}
+                            </p>
+                            <p class="mx-1">
+                                {% for client in deal.clients.all %}
+                                    <a href="{{ client.get_absolute_url }}">{{ client }}</a>
+                                    {% if not forloop.last %},{% endif %}
+                                {% endfor %}
+                            </p>
+                        </div>
+                    </a>
+                {% endcomponent %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

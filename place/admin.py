@@ -1,11 +1,12 @@
 from django.contrib import admin
 from .models import Country , Governorate , City
+from unfold.admin import ModelAdmin
 
 class GovernorateInline(admin.StackedInline):
     model = Governorate
     extra=1
 
-class Admin_Country(admin.ModelAdmin):
+class Admin_Country(ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
     inlines=[GovernorateInline]
@@ -17,7 +18,7 @@ class CityInline(admin.StackedInline):
     extra = 1
 
 
-class Admin_Governorate(admin.ModelAdmin):
+class Admin_Governorate(ModelAdmin):
     list_display = ('name',)
     list_filter = ('country',)
     search_fields =('name',)
@@ -26,7 +27,7 @@ class Admin_Governorate(admin.ModelAdmin):
 
 admin.site.register(Governorate , Admin_Governorate)
 
-class Admin_City(admin.ModelAdmin):
+class Admin_City(ModelAdmin):
     list_display = ('name',)
     list_filter = ('governorate',)
     search_fields = ('name',)

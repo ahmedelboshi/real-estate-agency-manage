@@ -1,0 +1,31 @@
+{% load i18n %}
+
+<div class="mb-6">
+    <h3 class="font-medium mb-4 text-gray-700 text-sm dark:text-gray-200">
+    {% blocktrans with filter_title=title %} {{ filter_title }} {% endblocktrans %}
+        </h3>
+    <ul class="border-l-4 border-gray-200 flex flex-col pl-4 py-2 text-gray-500 text-sm dark:border-gray-700">
+    {% for choice in choices %}
+        {% if choice.reset %}
+            <li class="mb-4 last:mb-0 {% if choice.selected %} font-medium text-primary-500 underline dark pr-4  {% else %} text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 pr-4  {% endif %}">
+                <a href="{{ choice.query_string|iriencode }}" title="{{ choice.display }}">{{ choice.display }}</a>
+            </li>
+        {% endif %}
+    {% endfor %}
+    {% for choice in choices %}
+        {% if not choice.reset %}
+            <li class="mb-4 last:mb-0 {% if choice.selected %} font-medium text-primary-500 underline dark pr-4  {% else %} text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 pr-4  {% endif %}">
+          <a href="{{ choice.query_string|iriencode }}" title="{{ choice.display }}" style="display:inline"></a>
+          <a class="small" 
+            {% if choice.selected and choice.exclude_query_string %}
+                href="{{ choice.exclude_query_string|iriencode }}"
+            {% else %}
+                href="{{ choice.include_query_string|iriencode }}"
+            {% endif %}
+            style="display:inline">{{ choice.display }}</a>
+
+            </li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+</div>

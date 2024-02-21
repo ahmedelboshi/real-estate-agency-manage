@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
-
+from django.shortcuts import reverse
 # Create your models here.
 User = get_user_model()
 
@@ -11,7 +11,7 @@ class SalesManProfile(models.Model):
         User, related_name="sales_profile", on_delete=models.CASCADE
     )
     created_at = models.DateTimeField(
-        _("created_at"), auto_now=False, auto_now_add=True
+        _("created at"), auto_now=False, auto_now_add=True
     )
     last_update = models.DateTimeField(
         _("last update"), auto_now=True, auto_now_add=False
@@ -19,6 +19,9 @@ class SalesManProfile(models.Model):
     total_commotions = models.IntegerField(_("total amount of commotions"),default=0)
     total_paid_commotions = models.IntegerField(_("total paid amount of commotions"),default=0)
     active = models.BooleanField(_("active"),default=True)
+
+    def __str__(self):
+        return f"{self.user.first_name}  {self.user.last_name}"
 
 
 class SalesManCommotion(models.Model):
@@ -58,7 +61,7 @@ class Deal(models.Model):
     status = models.CharField(_("status"), choices=DEAL_STATUS, max_length=50)
     price = models.IntegerField(_("price"))
     description = models.TextField(_("description"))
-    clients = models.ManyToManyField("lead.Client")
+    clients = models.ManyToManyField("lead.Client",related_name="deals",verbose_name=_("clients"))
     deal_property = models.ForeignKey(
         "department.Property",
         related_name="deals",
@@ -78,4 +81,18 @@ class Deal(models.Model):
         verbose_name_plural = _("Deals")
 
     def __str__(self):
-        return self.deal_property
+        return self.deal_property.name
+
+    def get_absolute_url(self):
+        return reverse("admin:sales_deal_change", args=[self.pk])
+    
+
+    def clients_as_text(self):
+        clients = self.clients.all()
+        html=""
+        len_clients = len(clients)
+        for index,client in enumerate(clients):
+            html += f"<a href='{client.get_absolute_url}'>{client.name}</a>"
+            if len_clients != index -1:
+                html+= ", "
+        return html
