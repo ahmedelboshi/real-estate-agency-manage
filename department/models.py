@@ -68,7 +68,7 @@ class PropertyImage(models.Model):
     item = models.ForeignKey(
         Property,
         related_name="images",
-        verbose_name=_("صور المنتج"),
+        verbose_name=_("property image"),
         on_delete=models.CASCADE,
     )
     image = models.ImageField(_("pic"), upload_to=image_file)
@@ -126,7 +126,7 @@ class AttributeChoice(models.Model):
         verbose_name=_("attribute"),
         on_delete=models.CASCADE,
     )
-    choice = models.CharField(_(" الاختيار بالعربيه"), max_length=100)
+    choice = models.CharField(_(" choice "), max_length=100)
 
 
     logo = models.ImageField(
@@ -137,8 +137,8 @@ class AttributeChoice(models.Model):
         return self.choice
 
     class Meta:
-        verbose_name = _("خيار")
-        verbose_name_plural = _("خيارات") 
+        verbose_name = _("choice")
+        verbose_name_plural = _("options") 
 class PropertyAttributeValue(models.Model):
     item = models.ForeignKey(
         "department.Property",related_name="attr_values", verbose_name=_("values"), on_delete=models.CASCADE
@@ -151,5 +151,5 @@ class PropertyAttributeValue(models.Model):
     )
 
     class Meta:
-        verbose_name = _("قيمة المتغيرات")
-        verbose_name_plural = _("قيم المتغيرات") 
+        verbose_name = _("attribute value")
+        verbose_name_plural = _("attribute values") 
