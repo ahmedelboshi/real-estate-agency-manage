@@ -16,8 +16,8 @@ from django.forms import inlineformset_factory
 from .models import ClientGroup, Client
 
 class ClientGroupAdmin(ModelAdmin):
-    list_display = ("id", "name")
-
+    list_display = ("id", "name","client_num")
+    search_fields = ['name']
     change_form_template = "admin/lead/clientgroup/change_form.html"
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
@@ -32,6 +32,9 @@ class ClientGroupAdmin(ModelAdmin):
         return super().change_view(request, object_id, form_url, extra_context)
 
 
+    def client_num(self,obj):
+        return obj.clients.all().count()
+    client_num.short_description=_("number of clients")
 admin.site.register(ClientGroup, ClientGroupAdmin)
 
 
@@ -169,7 +172,7 @@ class ClientAdmin(ModelAdmin):
                 text+=" ,"
 
         return mark_safe(text)
-    groups_as_text.description = "hi"
+    groups_as_text.short_description = _("groups")
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
         extra_context = extra_context or {}

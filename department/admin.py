@@ -176,11 +176,13 @@ class AttributeChoiceForm(forms.ModelForm):
             "logo": SvgAndImageFormField,
         }
 
-class AttributeChoiceInline(NestedTabularInline):
+
+class AttributeChoiceInline(NestedStackedInline):
     model = AttributeChoice
     extra = 2
     form = AttributeChoiceForm
 
+    template = "nesting/admin/inlines/stacked_choices.html"
 
 class AttributeForm(forms.ModelForm):
     class Meta:
@@ -194,7 +196,7 @@ class AttributeInline(NestedStackedInline):
     extra = 1
     inlines = [AttributeChoiceInline]
     form = AttributeForm
-
+    template = "nesting/admin/inlines/stacked_attr.html"
 class PropertyTypeForm(forms.ModelForm):
     class Meta:
         model = PropertyType
@@ -202,14 +204,15 @@ class PropertyTypeForm(forms.ModelForm):
         field_classes = {
             "logo": SvgAndImageFormField,
         }
-class PropertyTypeAdmin(NestedModelAdmin):
+class PropertyTypeAdmin(ModelAdmin,NestedModelAdmin):
     inlines = [AttributeInline]
     form = PropertyTypeForm
-
+    
+    # template = "nesting/admin/includes/inline.html"
+    # template
 admin.site.register(PropertyType, PropertyTypeAdmin)
 
 class CategoryAdmin(ModelAdmin):
     list_display = ('name',)
 
 admin.site.register(Category, CategoryAdmin)
-

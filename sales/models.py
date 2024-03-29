@@ -96,3 +96,38 @@ class Deal(models.Model):
             if len_clients != index -1:
                 html+= ", "
         return html
+
+
+class PropertyRequestsAttributeValues(models.Model):
+    property_requests = models.ForeignKey(
+        "department.Property",
+        related_name="request_attr_values",
+        verbose_name=_("values"),
+        on_delete=models.CASCADE,
+    )
+    choice = models.ForeignKey(
+        "department.AttributeChoice",
+        related_name="property_request_values",
+        verbose_name=_("value"),
+        on_delete=models.CASCADE,
+    )
+
+
+    class Meta:
+        verbose_name = _("PropertyRequestsAttributeValue")
+        verbose_name_plural = _("PropertyRequestsAttributeValues")
+
+
+class PropertyRequest(models.Model):
+    client = models.ForeignKey("lead.Client",related_name="requests", verbose_name=_("properties requests"), on_delete=models.CASCADE)
+    property_types = models.ManyToManyField("department.PropertyType",related_name="request")
+    budget_from = models.PositiveIntegerField(_("budget start from"))
+    budget_to = models.PositiveIntegerField(_("budget end to"))
+    class Meta:
+        verbose_name = _("Property Request")
+        verbose_name_plural = _("Property Requests")
+
+    def __str__(self):
+        return self.name
+
+

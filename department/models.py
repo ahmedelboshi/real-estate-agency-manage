@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext as _
+from djmoney.models.fields import MoneyField
 
 # from authapp.models import image_file
 from place.status import Status, StatusITem
@@ -44,7 +45,9 @@ class Property(models.Model):
     video = models.FileField(
         _("video"), upload_to="video", max_length=100, blank=True, null=True
     )
-    price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    price = MoneyField(
+        decimal_places=2, max_digits=20, default=0.00, default_currency="USD"
+    )
     date = models.DateField(_("add at"), auto_now_add=True, null=True)
     owner = models.ForeignKey("lead.Client", on_delete=models.CASCADE)
     property_type = models.ForeignKey("department.PropertyType",related_name="items",verbose_name=_("property type"),on_delete=models.SET_NULL,null=True)
@@ -138,7 +141,7 @@ class AttributeChoice(models.Model):
 
     class Meta:
         verbose_name = _("choice")
-        verbose_name_plural = _("options") 
+        verbose_name_plural = _("options")
 class PropertyAttributeValue(models.Model):
     item = models.ForeignKey(
         "department.Property",related_name="attr_values", verbose_name=_("values"), on_delete=models.CASCADE
@@ -152,4 +155,4 @@ class PropertyAttributeValue(models.Model):
 
     class Meta:
         verbose_name = _("attribute value")
-        verbose_name_plural = _("attribute values") 
+        verbose_name_plural = _("attribute values")
